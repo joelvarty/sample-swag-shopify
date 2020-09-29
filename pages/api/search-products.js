@@ -31,7 +31,7 @@ export default async (req, res) => {
 						id
 						title
 						featuredImage {
-							transformedSrc
+							transformedSrc(maxWidth:100)
 						}
 					}
 				}
