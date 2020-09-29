@@ -34,7 +34,7 @@ var ChooseProductCustomField = function () {
 
 
 			//bind our viewmodel to this
-			var viewModel = function (options) {
+			var viewModel = function () {
 
 				/// <summary>The KO ViewModel that will be binded to your HTML template.</summary>
 				/// <param name="options" type="Object">
