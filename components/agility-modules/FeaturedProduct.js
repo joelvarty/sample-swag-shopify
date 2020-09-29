@@ -29,6 +29,7 @@ FeaturedProduct.getCustomInitialProps = async function ({item, agility, language
 		//pull the actual product from Shopify...
 		const product = await getProduct(productStub.id)
 
+		const textOnLeft = item.fields.imagePlacement === "right"
 
 		return  {
 
@@ -38,6 +39,7 @@ FeaturedProduct.getCustomInitialProps = async function ({item, agility, language
 			primaryButtonText:item.fields.buyNowText,
 			primaryButtonUrl: product.onlineStorePreviewUrl,
 			imageSrc: product.featuredImage.transformedSrc,
+			textOnLeft,
 			statistics: [
 				{
 				  key: product.title,
