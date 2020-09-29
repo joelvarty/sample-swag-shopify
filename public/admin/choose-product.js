@@ -51,11 +51,13 @@ var ChooseProductCustomField = function () {
 				self.selectedValue = options.fieldBinding.extend({ throttle: 500 });
 
 				self.formatResult = function (item) {
-					return item.title;
+					return item.node.title;
 				};
 
 				self.formatSelection = function (item) {
-					return item.title;
+
+					options.contentItem.Values.ProductName(item.node.title);
+					return item.node.title;
 				};
 				self.ajaxRequest = null;
 
@@ -78,53 +80,50 @@ var ChooseProductCustomField = function () {
 						//set content of the Agility CMS Content Item
 
 						//options.contentItem.Values.ExternalID(obj.ID)
-						//options.contentItem.Values.Title(obj.Title);
+
 						//options.contentItem.Values.MyField1(obj.Value1)
 						//options.contentItem.Values.MyField2(obj.Value2)
 						//etc...
 
 						//return the ID
-						return obj.ID;
+						return obj.node.id;
 					},
 
 					ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-						url: "https://agility-cms-swag-test.myshopify.com/admin/api/graphql.json",
+						url: "http://localhost:3000/api/search-products",
 						dataType: 'json',
-						type: "post",
+						type: "get",
 						quietMillis: 250,
-						headers: {
 
-						},
-						originalValue: ko.unwrap(options.contentItem.Values.ExternalID()),
+						originalValue: ko.unwrap(options.fieldBinding),
 						term: "",
 						data: function (term, page, params) {
-							console.log("results", term, page, params)
 							return {
-								q: term, // search term
-								//other params...
-								languageCode: ContentManager.ViewModels.Navigation.currentLanguageCode()
+								filter: term, // search term
 							};
 						},
 						results: function (data, page) {
-							console.log("results", data, page)
-							//ensure data has both a 'Label' and 'Value' property in each item in the array
+
 							return {
 								results: data
 							};
 						},
 						current: function (data) {
-							console.log('current', data);
+
 						},
 						cache: true
 					},
 					initSelection: function (element, callback) {
+						//use the hidden "product name" field
 						var val = ko.unwrap(options.fieldBinding);
-						var label = ko.unwrap(options.contentItem.Values.Title);
+						var label = ko.unwrap(options.contentItem.Values.ProductName);
 
 						if (val && label) {
 							var data = {
-								Value: val,
-								Label: label
+								node: {
+									id: val,
+									title: label
+								}
 							};
 
 							callback(data);
