@@ -1,6 +1,6 @@
-import axios from "axios"
+import getProducts from "../../shopify-api/get-products"
 
-export default async (req, res) => {
+const searchProducts = async (req, res) => {
 
 	res.setHeader('Access-Control-Allow-Credentials', true)
 	res.setHeader('Access-Control-Allow-Origin', '*')
@@ -20,41 +20,10 @@ export default async (req, res) => {
 	try {
 		const filter = req.query.filter ?? ""
 
-
-
-		//list products..
-		const gq = JSON.stringify({
-			query: `
-			{ products(first:50, query: "${filter}") {
-				edges {
-					node {
-						id
-						title
-						featuredImage {
-							transformedSrc(maxWidth:100)
-						}
-					}
-				}
-			}
-			}`
-		})
-
-		const config = {
-			method: 'post',
-			url: 'https://agility-cms-swag-test.myshopify.com/admin/api/graphql.json',
-			headers: {
-				'Authorization': 'Basic MDQwOGFjY2IwNWU1YWM4YWIyYmZhOGFjNmUwNGE2OTg6c2hwcGFfMjdjN2Y4Y2UxMzVjNTdlZTg0NjQyMmM0NzBiOGQzNTM=',
-				'Content-Type': 'application/json',
-				'Cookie': '__cfduid=d355d3b58a8bcc815bc1913d64f9317f41601386988'
-			},
-			data: gq
-		};
-
-		const axiosRes = await axios(config)
-		axiosRes.data
+		const products = await getProducts({filter})
 
 		res.statusCode = 200
-		res.json(axiosRes.data.data.products.edges)
+		res.json(products)
 
 	} catch (e) {
 
@@ -63,3 +32,6 @@ export default async (req, res) => {
 
 	}
 }
+
+
+export default searchProducts
