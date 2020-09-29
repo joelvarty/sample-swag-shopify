@@ -4,8 +4,6 @@ import getProduct from "../../shopify-api/get-product"
 
 const FeaturedProduct = ({  customData}) => {
 
-	console.log(customData)
-
 
 	return (
 
