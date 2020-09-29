@@ -90,7 +90,7 @@ var ChooseProductCustomField = function () {
 					},
 
 					ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
-						url: "http://localhost:3000/api/search-products",
+						url: "https://sample-swag-shopify.vercel.app/api/search-products",
 						dataType: 'json',
 						type: "get",
 						quietMillis: 250,
