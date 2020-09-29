@@ -26,7 +26,32 @@ var ChooseProductCustomField = function () {
 
 		if ($pnl.size() == 0) {
 
-			var htmlContent = "<input class='product-picker-field' type='hidden' style='width:100%' data-bind='value:selectedValue,select2:select2'>";
+			var htmlContent = `
+				<style>
+				.prod-img {
+					display:inline-block;
+					height: 40px;
+					border-radius: 10px;
+					width: 40px;
+					background-size: cover;
+    				background-repeat: no-repeat;
+				}
+				.prod-img-small  {
+					margin-top: 2px;
+					display:inline-block;
+					height: 20px;
+					border-radius: 5px;
+					width: 20px;
+					background-size: cover;
+    				background-repeat: no-repeat;
+				}
+				.prod-text {
+					display:inline-block;
+					margin-left: 5px;
+					line-height: 20px;
+				}
+				</style>
+				<input class='product-picker-field' type='hidden' style='width:100%' data-bind='value:selectedValue,select2:select2'>`;
 			//pull down the html template and load it into the element
 			options.$elem.append(htmlContent)
 
@@ -51,13 +76,17 @@ var ChooseProductCustomField = function () {
 				self.selectedValue = options.fieldBinding.extend({ throttle: 500 });
 
 				self.formatResult = function (item) {
-					return item.node.title;
+
+					return $(`<div class='prod-img' style="background-image:url('${item.node.featuredImage.transformedSrc}')"/></div><div class='prod-text'>${item.node.title}</div>`);
+					//return item.node.title;
 				};
+
+
 
 				self.formatSelection = function (item) {
 
-					options.contentItem.Values.ProductName(item.node.title);
-					return item.node.title;
+					return $(`<div class='prod-img-small' style="background-image:url('${item.node.featuredImage.transformedSrc}')"/></div><div class='prod-text'>${item.node.title}</div>`);
+
 				};
 				self.ajaxRequest = null;
 
@@ -71,6 +100,7 @@ var ChooseProductCustomField = function () {
 					placeholder: 'Find product...',
 					formatResult: self.formatResult,
 					formatSelection: self.formatSelection,
+					templateResult: self.templateResult,
 
 					matcher: function (term, text) {
 						return true;
@@ -85,12 +115,13 @@ var ChooseProductCustomField = function () {
 						//options.contentItem.Values.MyField2(obj.Value2)
 						//etc...
 
-						//return the ID
-						return obj.node.id;
+						//save the whole thing as JSON
+						return JSON.stringify(obj.node)
 					},
 
 					ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
 						url: "https://sample-swag-shopify.vercel.app/api/search-products",
+						//FOR LOCAL DEV - url: "http://localhost:3000/api/search-products",
 						dataType: 'json',
 						type: "get",
 						quietMillis: 250,
@@ -115,19 +146,31 @@ var ChooseProductCustomField = function () {
 					},
 					initSelection: function (element, callback) {
 						//use the hidden "product name" field
-						var val = ko.unwrap(options.fieldBinding);
-						var label = ko.unwrap(options.contentItem.Values.ProductName);
+						var json = ko.unwrap(options.fieldBinding);
+						console.log({json})
+						if (json && json.length > 0) {
 
-						if (val && label) {
-							var data = {
-								node: {
-									id: val,
-									title: label
-								}
-							};
-
-							callback(data);
+							var node = JSON.parse(json)
+							console.log({node})
+							callback({node})
 						}
+
+
+
+						// console.log(val)
+
+						// var label = ko.unwrap(options.contentItem.Values.ProductName);
+
+						// if (val && label) {
+						// 	var data = {
+						// 		node: {
+						// 			id: val,
+						// 			title: label
+						// 		}
+						// 	};
+
+						// 	callback(data);
+						// }
 					},
 					allowClear: false,
 					dropdownCssClass: "bigdrop"
